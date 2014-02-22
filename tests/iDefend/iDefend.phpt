@@ -19,7 +19,7 @@ class iDefendTest extends \Tester\TestCase
         $password = 'z6WEd4qS';
         $url = 'https://idefend.apiary.io/ws';
 
-        $this->idefend = new iDefend($username, $password);
+        $this->idefend = new iDefend($username, $password, $url);
     }
 
 

@@ -1,4 +1,4 @@
-iDefend API
+iDefend API [![Build Status](https://travis-ci.org/ondrs/idefend-api.png?branch=master)](https://travis-ci.org/ondrs/idefend-api)
 ==============
 
 PHP API wrapper for iDefend API.
