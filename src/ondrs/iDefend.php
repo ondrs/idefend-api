@@ -47,9 +47,11 @@ class iDefend
      * @return \stdClass
      * @throws CurlException
      * @throws JsonException
+     * @throws iDefendException
      */
     public function startSession()
     {
+
         $request = $this->request('/user/startSession');
 
         $response = $request->post(Json::encode([
@@ -57,7 +59,12 @@ class iDefend
             'password' => $this->password,
         ]));
 
-        return Json::decode($response->getResponse());
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
