@@ -1,7 +1,7 @@
 iDefend API
 ==============
 
-PHP API wrapper for iDefend API
+PHP API wrapper for iDefend API.
 
 
 Instalation
