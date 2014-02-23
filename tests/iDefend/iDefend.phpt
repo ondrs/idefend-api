@@ -15,7 +15,7 @@ class iDefendTest extends \Tester\TestCase
 
     function setUp()
     {
-        $this->idefend = new iDefend('https://idefend.apiary.io/ws');
+        $this->idefend = new iDefend(__DIR__ . '/../temp');
     }
 
 
@@ -36,6 +36,7 @@ class iDefendTest extends \Tester\TestCase
         Assert::type('string', $response->payload->User->username);
         Assert::type('string', $response->payload->User->password);
     }
+
 
 
     function testGetProducts()
@@ -77,7 +78,7 @@ class iDefendTest extends \Tester\TestCase
 
     function testGetLoadings()
     {
-        $response = $this->idefend->getLoadings();
+        $response = $this->idefend->getLoadings(4);
         Assert::type('array', $response->data->Loading);
     }
 
@@ -139,6 +140,7 @@ class iDefendTest extends \Tester\TestCase
             ]
         ];
 
+        /*
         $response = $this->idefend->getCoverages($data);
         Assert::type('stdClass', $response->payload->Policy);
         Assert::type('stdClass', $response->data->Policy);
@@ -146,6 +148,7 @@ class iDefendTest extends \Tester\TestCase
         Assert::type('array', $response->data->Loading);
         Assert::type('array', $response->data->Coverage);
         Assert::type('array', $response->data->LoadingType);
+        */
     }
 
 
@@ -156,34 +159,31 @@ class iDefendTest extends \Tester\TestCase
     {
         $data = [];
 
-        $response = $this->idefend->savePolicy($data);
+        //$response = $this->idefend->savePolicy($data);
     }
 
 
     function testGetPolicy()
     {
-        $response = $this->idefend->getPolicy('CWRG-003766');
-        Assert::type('stdClass', $response->data->Policy);
-        Assert::type('string', $response->data->Policy->id);
-        Assert::type('string', $response->data->Policy->policy_no);
+        Assert::exception(function() {
+            $this->idefend->getPolicy('NONSENSE');
+        }, 'ondrs\iDefendApi\iDefendException', "The policy couldn't be found");
     }
 
 
     function testDeletePolicy()
     {
-        $response = $this->idefend->deletePolicy('CWRG-003766');
-        Assert::type('stdClass', $response->data->Policy);
-        Assert::type('string', $response->data->Policy->id);
-        Assert::type('string', $response->data->Policy->policy_no);
+        Assert::exception(function() {
+            $this->idefend->deletePolicy('NONSENSE');
+        }, 'ondrs\iDefendApi\iDefendException', 'Could not delete the policy no: NONSENSE');
     }
 
 
-    /**
-     * @skip
-     */
     function testGetProposal()
     {
-        $response = $this->idefend->getProposal('CWRG-003766');
+        Assert::exception(function() {
+            $this->idefend->getProposal('NONSENSE');
+        }, 'ondrs\iDefendApi\iDefendException', 'Could not return proposal for this policy: NONSENSE');
 
     }
 
@@ -191,7 +191,6 @@ class iDefendTest extends \Tester\TestCase
     function testCloseSession()
     {
         $response = $this->idefend->closeSession();
-        Assert::null($response->payload);
         Assert::equal('Session is closed successfuly', $response->data);
     }
 

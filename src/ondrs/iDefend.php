@@ -12,10 +12,12 @@ namespace ondrs\iDefendApi;
 use Kdyby\Curl\CurlException;
 use Kdyby\Curl\Request;
 use Nette\Utils\Json;
-use Nette\Utils\JsonException;
 
 class iDefend
 {
+
+    /** @var string */
+    private $tempDir;
 
     /** @var string */
     private $url = 'https://test.idefend.eu/ws';
@@ -28,10 +30,13 @@ class iDefend
 
 
     /**
+     * @param string $tempDir
      * @param string|null $url
      */
-    public function __construct($url = NULL)
+    public function __construct($tempDir, $url = NULL)
     {
+        $this->tempDir = $tempDir;
+
         if($url !== NULL) {
             $this->url = $url;
         }
@@ -43,7 +48,6 @@ class iDefend
      * @param string $password
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
      * @throws iDefendException
      */
     public function startSession($username, $password)
@@ -54,8 +58,10 @@ class iDefend
         $request = $this->request('/user/startSession');
 
         $response = $request->post(Json::encode([
-            'username' => $this->username,
-            'password' => $this->password,
+            'User' => [
+                'username' => $this->username,
+                'password' => $this->password
+            ],
         ]));
 
         $result = Json::decode($response->getResponse());
@@ -70,13 +76,19 @@ class iDefend
     /**
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
     public function getProducts()
     {
         $request = $this->request('/policy/getProducts');
         $response = $request->post(Json::encode(''));
-        return Json::decode($response->getResponse());
+        
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
@@ -84,7 +96,7 @@ class iDefend
      * @param int $productId
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
     public function getPaymentTerms($productId)
     {
@@ -92,7 +104,13 @@ class iDefend
         $response = $request->post(Json::encode([
             'product_id' => $productId,
         ]));
-        return Json::decode($response->getResponse());
+
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
@@ -100,7 +118,7 @@ class iDefend
      * @param int $productId
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
     public function getInsuranceTerms($productId)
     {
@@ -108,46 +126,73 @@ class iDefend
         $response = $request->post(Json::encode([
             'product_id' => $productId,
         ]));
-        return Json::decode($response->getResponse());
+
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
     /**
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
     public function getTitles()
     {
         $request = $this->request('/policy/getTitles');
         $response = $request->post(Json::encode(''));
-        return Json::decode($response->getResponse());
+        
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
     /**
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
     public function getExtras()
     {
         $request = $this->request('/policy/getExtras');
         $response = $request->post(Json::encode(''));
-        return Json::decode($response->getResponse());
+
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
     /**
+     * @param $productId
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
-    public function getLoadings()
+    public function getLoadings($productId)
     {
         $request = $this->request('/policy/getLoadings');
-        $response = $request->post(Json::encode(''));
-        return Json::decode($response->getResponse());
+        $response = $request->post(Json::encode([
+            'product_id' => $productId,
+        ]));
+        
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
@@ -155,13 +200,19 @@ class iDefend
      * @param array $data
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
     public function getCoverages(array $data)
     {
         $request = $this->request('/policy/getCoverages');
         $response = $request->post(Json::encode($data));
-        return Json::decode($response->getResponse());
+
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
@@ -169,13 +220,19 @@ class iDefend
      * @param array $data
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
     public function savePolicy(array $data)
     {
         $request = $this->request('/policy/savePolicy');
         $response = $request->post(Json::encode($data));
-        return Json::decode($response->getResponse());
+
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
@@ -183,7 +240,7 @@ class iDefend
      * @param string $policyNo
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
     public function getPolicy($policyNo)
     {
@@ -191,7 +248,13 @@ class iDefend
         $response = $request->post(Json::encode([
             'policy_no' => $policyNo,
         ]));
-        return Json::decode($response->getResponse());
+
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
@@ -199,7 +262,7 @@ class iDefend
      * @param string $policyNo
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
     public function deletePolicy($policyNo)
     {
@@ -207,7 +270,13 @@ class iDefend
         $response = $request->post(Json::encode([
             'policy_no' => $policyNo,
         ]));
-        return Json::decode($response->getResponse());
+
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
@@ -215,7 +284,7 @@ class iDefend
      * @param string $policyNo
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
     public function getProposal($policyNo)
     {
@@ -223,20 +292,32 @@ class iDefend
         $response = $request->post(Json::encode([
             'policy_no' => $policyNo,
         ]));
-        return Json::decode($response->getResponse());
+
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
     /**
      * @return \stdClass
      * @throws CurlException
-     * @throws JsonException
+     * @throws iDefendException
      */
     public function closeSession()
     {
         $request = $this->request('/user/closeSession');
         $response = $request->post(Json::encode(''));
-        return Json::decode($response->getResponse());
+
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        return $result;
     }
 
 
@@ -249,9 +330,11 @@ class iDefend
         $request = new Request($this->url . $url);
         $request->setCertificationVerify(FALSE);
 
-        $request->options['httpHeader'] = [
-            'Content-Type: application/json',
-        ];
+        $request->options['COOKIESESSION'] = TRUE;
+        $request->options['COOKIEFILE'] = $this->tempDir . '/iDefend.cookie';
+        $request->options['COOKIEJAR'] = $this->tempDir . '/iDefend.cookie';
+
+        $request->headers['Content-Type'] = 'application/json';
 
         return $request;
     }
