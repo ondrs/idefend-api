@@ -15,7 +15,7 @@ class iDefendTest extends \Tester\TestCase
 
     function setUp()
     {
-        $this->idefend = new iDefend(__DIR__ . '/../temp');
+        $this->idefend = new iDefend(__DIR__ . '/../tmp');
     }
 
 
