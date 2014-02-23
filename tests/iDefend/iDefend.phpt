@@ -15,11 +15,7 @@ class iDefendTest extends \Tester\TestCase
 
     function setUp()
     {
-        $username = 'test_user';
-        $password = 'z6WEd4qS';
-        $url = 'https://idefend.apiary.io/ws';
-
-        $this->idefend = new iDefend($username, $password, $url);
+        $this->idefend = new iDefend('https://idefend.apiary.io/ws');
     }
 
 
@@ -31,7 +27,10 @@ class iDefendTest extends \Tester\TestCase
 
     function testStartSession()
     {
-        $response = $this->idefend->startSession();
+        $username = 'test_user';
+        $password = 'z6WEd4qS';
+
+        $response = $this->idefend->startSession($username, $password);
 
         Assert::type('stdClass', $response->data->User);
         Assert::type('string', $response->payload->User->username);

@@ -28,15 +28,10 @@ class iDefend
 
 
     /**
-     * @param string $username
-     * @param string $password
      * @param string|null $url
      */
-    public function __construct($username, $password, $url = NULL)
+    public function __construct($url = NULL)
     {
-        $this->username = $username;
-        $this->password = $password;
-
         if($url !== NULL) {
             $this->url = $url;
         }
@@ -44,13 +39,17 @@ class iDefend
 
 
     /**
+     * @param string $username
+     * @param string $password
      * @return \stdClass
      * @throws CurlException
      * @throws JsonException
      * @throws iDefendException
      */
-    public function startSession()
+    public function startSession($username, $password)
     {
+        $this->username = $username;
+        $this->password = $password;
 
         $request = $this->request('/user/startSession');
 
