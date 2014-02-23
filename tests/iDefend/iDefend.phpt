@@ -197,5 +197,4 @@ class iDefendTest extends \Tester\TestCase
 
 }
 
-$test = new iDefendTest;
-$test->run();
+id(new iDefendTest)->run();
