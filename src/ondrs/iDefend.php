@@ -93,17 +93,14 @@ class iDefend
 
 
     /**
-     * @param int $productId
      * @return array
      * @throws CurlException
      * @throws iDefendException
      */
-    public function getPaymentTerms($productId)
+    public function getPaymentTerms()
     {
         $request = $this->request('/policy/getPaymentTerms');
-        $response = $request->post(Json::encode([
-            'product_id' => $productId,
-        ]));
+        $response = $request->post(Json::encode(''));
 
         $result = Json::decode($response->getResponse());
 
@@ -123,17 +120,14 @@ class iDefend
 
 
     /**
-     * @param int $productId
      * @return array
      * @throws CurlException
      * @throws iDefendException
      */
-    public function getInsuranceTerms($productId)
+    public function getInsuranceTerms()
     {
         $request = $this->request('/policy/getInsuranceTerms');
-        $response = $request->post(Json::encode([
-            'product_id' => $productId,
-        ]));
+        $response = $request->post(Json::encode(''));
 
         $result = Json::decode($response->getResponse());
 
