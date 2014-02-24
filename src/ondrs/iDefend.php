@@ -69,12 +69,12 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        return $result->data;
     }
 
 
     /**
-     * @return \stdClass
+     * @return array
      * @throws CurlException
      * @throws iDefendException
      */
@@ -88,13 +88,13 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        return $result->data->Product;
     }
 
 
     /**
      * @param int $productId
-     * @return \stdClass
+     * @return array
      * @throws CurlException
      * @throws iDefendException
      */
@@ -110,13 +110,21 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        $data = [];
+        foreach($result->data->PaymentTerm as $p) {
+            $data[] = [
+                'id' => $p,
+                'name' => $p
+            ];
+        }
+
+        return $result->data->PaymentTerm;
     }
 
 
     /**
      * @param int $productId
-     * @return \stdClass
+     * @return array
      * @throws CurlException
      * @throws iDefendException
      */
@@ -132,12 +140,20 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        $data = [];
+        foreach($result->data->InsuranceTerm as $p) {
+            $data[] = [
+                'id' => $p,
+                'name' => $p
+            ];
+        }
+
+        return $data;
     }
 
 
     /**
-     * @return \stdClass
+     * @return array
      * @throws CurlException
      * @throws iDefendException
      */
@@ -151,12 +167,20 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        $data = [];
+        foreach($result->data->Title as $k => $p) {
+            $data[] = [
+                'id' => $k,
+                'name' => $p
+            ];
+        }
+
+        return $data;
     }
 
 
     /**
-     * @return \stdClass
+     * @return array
      * @throws CurlException
      * @throws iDefendException
      */
@@ -170,13 +194,13 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        return $result->data->Extra;
     }
 
 
     /**
      * @param $productId
-     * @return \stdClass
+     * @return array
      * @throws CurlException
      * @throws iDefendException
      */
@@ -192,7 +216,7 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        return $result->data->Loading;
     }
 
 
@@ -254,7 +278,7 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        return $result->data;
     }
 
 
@@ -276,7 +300,7 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        return $result->data;
     }
 
 
@@ -298,7 +322,7 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        return $result->data;
     }
 
 
@@ -317,7 +341,7 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        return $result->data;
     }
 
 

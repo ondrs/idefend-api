@@ -32,9 +32,7 @@ class iDefendTest extends \Tester\TestCase
 
         $response = $this->idefend->startSession($username, $password);
 
-        Assert::type('stdClass', $response->data->User);
-        Assert::type('string', $response->payload->User->username);
-        Assert::type('string', $response->payload->User->password);
+        Assert::type('stdClass', $response->User);
     }
 
 
@@ -42,44 +40,42 @@ class iDefendTest extends \Tester\TestCase
     function testGetProducts()
     {
         $response = $this->idefend->getProducts();
-        Assert::type('array', $response->data->Product);
+        Assert::type('array', $response);
     }
 
 
     function testGetPaymentTerms()
     {
         $response = $this->idefend->getPaymentTerms(4);
-        Assert::notEqual(NULL, $response->payload->product_id);
-        Assert::type('array', $response->data->PaymentTerm);
+        Assert::type('array', $response);
     }
 
 
     function testGetInsuranceTerms()
     {
         $response = $this->idefend->getInsuranceTerms(2);
-        Assert::notEqual(NULL, $response->payload->product_id);
-        Assert::type('array', $response->data->InsuranceTerm);
+        Assert::type('array', $response);
     }
 
 
     function testGetTitles()
     {
         $response = $this->idefend->getTitles();
-        Assert::type('stdClass', $response->data->Title);
+        Assert::type('array', $response);
     }
 
 
     function testGetExtras()
     {
         $response = $this->idefend->getExtras();
-        Assert::type('array', $response->data->Extra);
+        Assert::type('array', $response);
     }
 
 
     function testGetLoadings()
     {
         $response = $this->idefend->getLoadings(4);
-        Assert::type('array', $response->data->Loading);
+        Assert::type('array', $response);
     }
 
 
@@ -191,7 +187,7 @@ class iDefendTest extends \Tester\TestCase
     function testCloseSession()
     {
         $response = $this->idefend->closeSession();
-        Assert::equal('Session is closed successfuly', $response->data);
+        Assert::equal('Session is closed successfuly', $response);
     }
 
 
