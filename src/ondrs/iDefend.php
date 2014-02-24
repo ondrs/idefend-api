@@ -236,7 +236,7 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        return $result->data;
     }
 
 
@@ -256,7 +256,7 @@ class iDefend
         if( isset($result->data->error) )
             throw new iDefendException($result->data->error);
 
-        return $result;
+        return $result->data;
     }
 
 
