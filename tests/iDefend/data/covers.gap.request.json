@@ -1,0 +1,12 @@
+{
+  "Policy":{
+    "product_id":"2",
+    "vehicle_reg_date":"2014-01-29",
+    "vehicle_purchase_date":"2014-01-29",
+    "vehicle_purchase_price":"12345.25",
+    "payment_term":"LumpSum",
+    "ins_term":"36",
+    "vat_included":"true",
+    "vat_reclaimable":"false"
+  }
+}

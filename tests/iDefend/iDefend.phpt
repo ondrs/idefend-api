@@ -81,60 +81,7 @@ class iDefendTest extends \Tester\TestCase
 
     function testGetCoverages()
     {
-        $data = [
-            'Policy' => [
-                'product_id' => 4,
-                'auto_model_id' => 123,
-                'vehicle_reg_date' => '2014-02-05',
-                'vehicle_purchase_date' => '2014-02-05',
-                'vehicle_odometer' => 500,
-                'vehicle_mfg_inception' => '2014-02-05',
-                'vehicle_engine_size' => 1990,
-                'vehicle_mfg_warr_term' => 36,
-                'vehicle_mfg_warr_km' => 10000,
-                'payment_term' => 'LumpSum',
-                'vehicle_purchase_price' => 12345.25,
-                'ins_term' => 36,
-            ],
-            'Extra' => [
-                [
-                    'id' => 2,
-                    'name' => 'Trip Interruption',
-                    'selected' => TRUE,
-                ],
-                [
-                    'id' => 4,
-                    'name' => 'Trip Interruption',
-                    'selected' => TRUE,
-                ],
-            ],
-            'Loading' => [
-                [
-                    'id' => 3,
-                    'type' => 'TERM',
-                    'value' => 9,
-                    'selected' => TRUE,
-                ],
-                [
-                    'id' => 10,
-                    'type' => 'KM_LIMIT',
-                    'value' => 'Unlimited',
-                    'selected' => TRUE,
-                ],
-                [
-                    'id' => 9,
-                    'type' => 'DEDUCTIBLE',
-                    'value' => 0,
-                    'selected' => TRUE,
-                ],
-                [
-                    'id' => 36,
-                    'type' => 'CLAIM_LIMIT',
-                    'value' => 50000,
-                    'selected' => TRUE,
-                ],
-            ]
-        ];
+        $data = \Nette\Utils\Json::decode(file_get_contents(__DIR__ . '/data/covers.gap.request.json'), \Nette\Utils\Json::FORCE_ARRAY);
 
         $response = $this->idefend->getCoverages($data);
         Assert::type('stdClass', $response->Policy);
@@ -145,15 +92,17 @@ class iDefendTest extends \Tester\TestCase
     }
 
 
-    /**
-     * @skip
-     */
+    /*
     function testSavePolicy()
     {
-        $data = [];
+        $data = \Nette\Utils\Json::decode(file_get_contents(__DIR__ . '/data/policy.request.json'), \Nette\Utils\Json::FORCE_ARRAY);
 
-        //$response = $this->idefend->savePolicy($data);
+        $response = $this->idefend->savePolicy($data);
+        Assert::type('stdClass', $response->Policy);
+        Assert::type('array', $response->Extra);
+        Assert::type('array', $response->Loading);
     }
+    */
 
 
     function testGetPolicy()

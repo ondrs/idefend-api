@@ -93,14 +93,17 @@ class iDefend
 
 
     /**
+     * @param int $productId
      * @return array
      * @throws CurlException
      * @throws iDefendException
      */
-    public function getPaymentTerms()
+    public function getPaymentTerms($productId)
     {
         $request = $this->request('/policy/getPaymentTerms');
-        $response = $request->post(Json::encode(''));
+        $response = $request->post(Json::encode([
+            'product_id' => $productId,
+        ]));
 
         $result = Json::decode($response->getResponse());
 
@@ -120,14 +123,17 @@ class iDefend
 
 
     /**
+     * @param int $productId
      * @return array
      * @throws CurlException
      * @throws iDefendException
      */
-    public function getInsuranceTerms()
+    public function getInsuranceTerms($productId)
     {
         $request = $this->request('/policy/getInsuranceTerms');
-        $response = $request->post(Json::encode(''));
+        $response = $request->post(Json::encode([
+            'product_id' => $productId,
+        ]));
 
         $result = Json::decode($response->getResponse());
 
@@ -247,8 +253,16 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
-            throw new iDefendException($result->data->error);
+        if( isset($result->data->error) ) {
+            $msg = [];
+
+            foreach($result->data->error as $key => $val) {
+                $msg[] = $key . ': ' . is_array($val) ? join(', ', $val) : $val;
+            }
+
+            throw new iDefendException(implode(' ', $msg));
+        }
+
 
         return $result->data;
     }
