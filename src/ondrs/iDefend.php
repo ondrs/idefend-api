@@ -118,7 +118,7 @@ class iDefend
             ];
         }
 
-        return $result->data->PaymentTerm;
+        return $data;
     }
 
 
