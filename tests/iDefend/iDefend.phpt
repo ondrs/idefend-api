@@ -136,15 +136,12 @@ class iDefendTest extends \Tester\TestCase
             ]
         ];
 
-        /*
         $response = $this->idefend->getCoverages($data);
-        Assert::type('stdClass', $response->payload->Policy);
-        Assert::type('stdClass', $response->data->Policy);
-        Assert::type('array', $response->data->Extra);
-        Assert::type('array', $response->data->Loading);
-        Assert::type('array', $response->data->Coverage);
-        Assert::type('array', $response->data->LoadingType);
-        */
+        Assert::type('stdClass', $response->Policy);
+        Assert::type('array', $response->Extra);
+        Assert::type('array', $response->Loading);
+        Assert::type('array', $response->Coverage);
+        Assert::type('array', $response->LoadingType);
     }
 
 
