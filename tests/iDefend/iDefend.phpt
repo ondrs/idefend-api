@@ -46,14 +46,14 @@ class iDefendTest extends \Tester\TestCase
 
     function testGetPaymentTerms()
     {
-        $response = $this->idefend->getPaymentTerms();
+        $response = $this->idefend->getPaymentTerms(4);
         Assert::type('array', $response);
     }
 
 
     function testGetInsuranceTerms()
     {
-        $response = $this->idefend->getInsuranceTerms();
+        $response = $this->idefend->getInsuranceTerms(2);
         Assert::type('array', $response);
     }
 
