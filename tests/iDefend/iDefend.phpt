@@ -81,7 +81,7 @@ class iDefendTest extends \Tester\TestCase
 
     function testGetCoverages()
     {
-        $data = \Nette\Utils\Json::decode(file_get_contents(__DIR__ . '/data/covers.gap.request.json'), \Nette\Utils\Json::FORCE_ARRAY);
+        $data = \Nette\Utils\Json::decode(file_get_contents(__DIR__ . '/data/covers.warranty.request.json'), \Nette\Utils\Json::FORCE_ARRAY);
 
         $response = $this->idefend->getCoverages($data);
         Assert::type('stdClass', $response->Policy);
