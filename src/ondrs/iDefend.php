@@ -338,7 +338,7 @@ class iDefend
 
         $return->Paging = $result->data->Paging;
         unset($result->data->Paging);
-        $return->data = $result->data;
+        $return->data = (array)$result->data;
 
         return $return;
     }
