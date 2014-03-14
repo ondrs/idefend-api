@@ -291,6 +291,58 @@ class iDefend
 
 
     /**
+     * @param int $page
+     * @param int $limit
+     * @param null|array $conditions
+     * @param null|array $fields
+     * @return mixed
+     * @return \stdClass
+     * @throws CurlException
+     * @throws iDefendException
+     */
+    public function getPolicyList($page = 1, $limit = 30, $conditions = NULL, $fields = NULL)
+    {
+        $request = $this->request('/policy/getPolicyList');
+
+        if($fields === NULL) {
+            $fields = [
+                'id',
+                'policy_no',
+                'vehicle_vin',
+                'premium',
+                'customer_company_name',
+                'customer_id_no'
+            ];
+        }
+
+        $data = [
+            'page' => $page,
+            'limit' => $limit,
+            'fields' => $fields,
+        ];
+
+        if($conditions !== NULL) {
+            $data['conditions'] = $conditions;
+        }
+
+        $response = $request->post(Json::encode($data));
+
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) )
+            throw new iDefendException($result->data->error);
+
+        $return = new \stdClass();
+
+        $return->Paging = $result->data->Paging;
+        unset($result->data->Paging);
+        $return->data = $result->data;
+
+        return $return;
+    }
+
+
+    /**
      * @param string $policyNo
      * @return \stdClass
      * @throws CurlException

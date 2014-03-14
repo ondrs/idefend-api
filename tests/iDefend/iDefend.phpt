@@ -113,6 +113,19 @@ class iDefendTest extends \Tester\TestCase
     }
 
 
+    function testGetPolicyList()
+    {
+        $response = $this->idefend->getPolicyList(1, 30);
+
+        Assert::type('stdClass', $response->data);
+
+        Assert::equal(1, $response->Paging->currentPage);
+        Assert::equal(30, $response->Paging->recordsInPage);
+        Assert::type('int', $response->Paging->pageCount);
+        Assert::type('int', $response->Paging->recordsCount);
+    }
+
+
     function testDeletePolicy()
     {
         Assert::exception(function() {
