@@ -341,7 +341,7 @@ class iDefend
 
         $return->data = [];
         foreach($result->data as $policy) {
-            $return->data[] = $policy;
+            $return->data[] = $policy->Policy;
         }
 
         return $return;
