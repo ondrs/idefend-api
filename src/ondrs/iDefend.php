@@ -383,12 +383,21 @@ class iDefend
             'policy_no' => $policyNo,
         ]));
 
-        $result = Json::decode($response->getResponse());
+        $body = $response->getResponse();
 
-        if( isset($result->data->error) )
-            throw new iDefendException($result->data->error);
+        if($response->getHeaders()['Content-Type'] == 'application/pdf') {
+            $filename = $this->tempDir . '/' . $policyNo . '-' . md5($body) . '.pdf';
+            file_put_contents($filename, $body);
+            return $filename;
+        }
 
-        return $result->data;
+        $json = Json::decode($body);
+
+        if( isset($json->data->error) ) {
+            throw new iDefendException($json->data->error);
+        }
+
+        throw new iDefendException("Wrong response - no PDF nor error");
     }
 
 
