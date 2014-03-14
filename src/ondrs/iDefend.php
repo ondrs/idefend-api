@@ -338,7 +338,11 @@ class iDefend
 
         $return->Paging = $result->data->Paging;
         unset($result->data->Paging);
-        $return->data = Json::decode($result->data, Json::FORCE_ARRAY);
+
+        $return->data = [];
+        foreach($result->data as $policy) {
+            $return->data[] = $policy;
+        }
 
         return $return;
     }
