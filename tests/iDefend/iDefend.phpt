@@ -117,7 +117,7 @@ class iDefendTest extends \Tester\TestCase
     {
         $response = $this->idefend->getPolicyList(1, 30);
 
-        Assert::type('stdClass', $response->data);
+        Assert::type('array', $response->data);
 
         Assert::equal(1, $response->Paging->currentPage);
         Assert::equal(30, $response->Paging->recordsInPage);
