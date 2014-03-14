@@ -310,6 +310,8 @@ class iDefend
                 'policy_no',
                 'vehicle_vin',
                 'premium',
+                'customer_first_name',
+                'customer_last_name',
                 'customer_company_name',
                 'customer_id_no'
             ];
