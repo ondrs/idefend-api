@@ -16,6 +16,11 @@ class iDefendTest extends \Tester\TestCase
     function setUp()
     {
         $this->idefend = new iDefend(TEMP_DIR);
+
+        $username = 'test_user';
+        $password = 'z6WEd4qS';
+
+        $this->idefend->setCredentials($username, $password);
     }
 
 
@@ -27,10 +32,7 @@ class iDefendTest extends \Tester\TestCase
 
     function testStartSession()
     {
-        $username = 'test_user';
-        $password = 'z6WEd4qS';
-
-        $response = $this->idefend->startSession($username, $password);
+        $response = $this->idefend->startSession();
 
         Assert::type('stdClass', $response->User);
     }

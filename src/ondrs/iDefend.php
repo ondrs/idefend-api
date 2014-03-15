@@ -46,15 +46,24 @@ class iDefend
     /**
      * @param string $username
      * @param string $password
-     * @return \stdClass
-     * @throws CurlException
-     * @throws iDefendException
+     * @return $this
      */
-    public function startSession($username, $password)
+    public function setCredentials($username, $password)
     {
         $this->username = $username;
         $this->password = $password;
 
+        return $this;
+    }
+
+
+    /**
+     * @return \stdClass
+     * @throws CurlException
+     * @throws iDefendException
+     */
+    public function startSession()
+    {
         $request = $this->request('/user/startSession');
 
         $response = $request->post(Json::encode([
@@ -66,8 +75,9 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if( isset($result->data->error) ) {
             throw new iDefendException($result->data->error);
+        }
 
         return $result->data;
     }
@@ -85,8 +95,9 @@ class iDefend
         
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if( isset($result->data->error) ) {
             throw new iDefendException($result->data->error);
+        }
 
         return $result->data->Product;
     }
@@ -137,8 +148,9 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if( isset($result->data->error) ) {
             throw new iDefendException($result->data->error);
+        }
 
         $data = [];
         foreach($result->data->InsuranceTerm as $p) {
@@ -164,8 +176,9 @@ class iDefend
         
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if( isset($result->data->error) ) {
             throw new iDefendException($result->data->error);
+        }
 
         $data = [];
         foreach($result->data->Title as $k => $p) {
@@ -191,8 +204,9 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if( isset($result->data->error) ) {
             throw new iDefendException($result->data->error);
+        }
 
         return $result->data->Extra;
     }
@@ -213,8 +227,9 @@ class iDefend
         
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if( isset($result->data->error) ) {
             throw new iDefendException($result->data->error);
+        }
 
         return $result->data->Loading;
     }
@@ -233,8 +248,9 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if( isset($result->data->error) ) {
             throw new iDefendException($result->data->error);
+        }
 
         return $result->data;
     }
@@ -283,8 +299,9 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if( isset($result->data->error) ) {
             throw new iDefendException($result->data->error);
+        }
 
         return $result->data;
     }
@@ -363,8 +380,9 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if( isset($result->data->error) ) {
             throw new iDefendException($result->data->error);
+        }
 
         return $result->data;
     }
@@ -413,8 +431,9 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if( isset($result->data->error) ) {
             throw new iDefendException($result->data->error);
+        }
 
         return $result->data;
     }
