@@ -270,15 +270,20 @@ class iDefend
         $result = Json::decode($response->getResponse());
 
         if( isset($result->data->error) ) {
-            $msg = [];
+            $err = $result->data->error;
 
-            foreach($result->data->error as $key => $val) {
-                $msg[] = $key . ': ' . is_array($val) ? join(', ', $val) : $val;
+            if(is_array($err)) {
+                $msg = [];
+                foreach($err as $key => $val) {
+                    $msg[] = $key . ': ' . is_array($val) ? join(', ', $val) : $val;
+                }
+                $msg = implode(' ', $msg);
+            } else {
+                $msg = $err;
             }
 
-            throw new iDefendException(implode(' ', $msg));
+            throw new iDefendException($msg);
         }
-
 
         return $result->data;
     }
