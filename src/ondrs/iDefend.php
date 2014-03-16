@@ -272,7 +272,7 @@ class iDefend
         if( isset($result->data->error) ) {
             $err = $result->data->error;
 
-            if(is_array($err)) {
+            if(count($err)) {
                 $msg = [];
                 foreach($err as $key => $val) {
                     $msg[] = $key . ': ' . is_array($val) ? join(', ', $val) : $val;
