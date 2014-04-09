@@ -115,6 +115,18 @@ class iDefendTest extends \Tester\TestCase
     }
 
 
+    function testGetQuote()
+    {
+       // TODO: implement
+    }
+
+
+    function testSaveQuote()
+    {
+        // TODO: implement
+    }
+
+
     function testGetPolicyList()
     {
         $response = $this->idefend->getPolicyList(1, 30);

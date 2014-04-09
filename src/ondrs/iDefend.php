@@ -279,6 +279,28 @@ class iDefend
 
 
     /**
+     * @param array $data
+     * @return \stdClass
+     * @throws CurlException
+     * @throws iDefendException
+     */
+    public function saveQuote(array $data)
+    {
+        $request = $this->request('/policy/saveQuote');
+        $response = $request->post(Json::encode($data));
+
+        $result = Json::decode($response->getResponse());
+
+        if( isset($result->data->error) ) {
+            $err = serialize(Json::encode($result->data->error));
+            throw new iDefendException($err);
+        }
+
+        return $result->data;
+    }
+
+
+    /**
      * @param string $policyNo
      * @return \stdClass
      * @throws CurlException
@@ -322,6 +344,9 @@ class iDefend
                 'vehicle_vin',
                 'premium',
                 'created',
+                'status_opened_on',
+                'status_certified_on',
+                'status_canceled_on',
                 'status_paid_on',
                 'customer_first_name',
                 'customer_last_name',
@@ -411,7 +436,38 @@ class iDefend
             throw new iDefendException($json->data->error);
         }
 
-        throw new iDefendException("Wrong response - no PDF nor error");
+        throw new iDefendException("Wrong response - no PDF or error");
+    }
+
+
+    /**
+     * @param string $policyNo
+     * @return \stdClass
+     * @throws CurlException
+     * @throws iDefendException
+     */
+    public function getQuote($policyNo)
+    {
+        $request = $this->request('/policy/getQuote');
+        $response = $request->post(Json::encode([
+            'policy_no' => $policyNo,
+        ]));
+
+        $body = $response->getResponse();
+
+        if($response->getHeaders()['Content-Type'] == 'application/pdf') {
+            $filename = $this->tempDir . '/' . $policyNo . '-' . md5($body) . '.pdf';
+            file_put_contents($filename, $body);
+            return $filename;
+        }
+
+        $json = Json::decode($body);
+
+        if( isset($json->data->error) ) {
+            throw new iDefendException($json->data->error);
+        }
+
+        throw new iDefendException("Wrong response - no PDF or error");
     }
 
 
@@ -444,9 +500,9 @@ class iDefend
         $request = new Request($this->url . $url);
         $request->setCertificationVerify(FALSE);
 
-        $request->options['COOKIESESSION'] = TRUE;
-        $request->options['COOKIEFILE'] = $this->tempDir . '/iDefend.cookie';
-        $request->options['COOKIEJAR'] = $this->tempDir . '/iDefend.cookie';
+        $request->options['cookieSession'] = TRUE;
+        $request->options['cookieFile'] = $this->tempDir . '/iDefend.cookie';
+        $request->options['cookieJar'] = $this->tempDir . '/iDefend.cookie';
 
         $request->headers['Content-Type'] = 'application/json';
 
