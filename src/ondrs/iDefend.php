@@ -504,9 +504,11 @@ class iDefend
         $request = new Request($this->url . $url);
         $request->setCertificationVerify(FALSE);
 
+        $file = $this->tempDir . '/' . $this->username . '.cookie';
+
         $request->options['cookieSession'] = TRUE;
-        $request->options['cookieFile'] = $this->tempDir . '/iDefend.cookie';
-        $request->options['cookieJar'] = $this->tempDir . '/iDefend.cookie';
+        $request->options['cookieFile'] = $file;
+        $request->options['cookieJar'] = $file;
 
         $request->headers['Content-Type'] = 'application/json';
 
