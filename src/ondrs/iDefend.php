@@ -37,6 +37,10 @@ class iDefend
     {
         $this->tempDir = $tempDir;
 
+        if(!is_dir($this->tempDir)) {
+            mkdir($this->tempDir);
+        }
+
         if($url !== NULL) {
             $this->url = $url;
         }
