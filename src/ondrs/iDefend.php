@@ -518,6 +518,46 @@ class iDefend
 
 
     /**
+     * @return \stdClass
+     * @throws CurlException
+     * @throws iDefendException
+     */
+    public function getCancellationCodificators()
+    {
+        $request = $this->request('/user/getCancellationCodificators');
+        $response = $request->post(Json::encode(''));
+
+        $result = Json::decode($response->getResponse());
+
+        if (isset($result->data->error)) {
+            throw new iDefendException($result->data->error);
+        }
+
+        return $result->data;
+    }
+
+
+    /**
+     * @param array $data
+     * @return mixed
+     * @throws iDefendException
+     */
+    public function cancelPolicy(array $data)
+    {
+        $request = $this->request('/user/cancelPolicy');
+        $response = $request->post(Json::encode($data));
+
+        $result = Json::decode($response->getResponse());
+
+        if (isset($result->data->error)) {
+            throw new iDefendException($result->data->error);
+        }
+
+        return $result->data;
+    }
+
+
+    /**
      * @param $url
      * @return Request
      */
