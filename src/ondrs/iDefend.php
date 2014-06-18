@@ -37,11 +37,11 @@ class iDefend
     {
         $this->tempDir = $tempDir;
 
-        if(!is_dir($this->tempDir)) {
+        if (!is_dir($this->tempDir)) {
             mkdir($this->tempDir);
         }
 
-        if($url !== NULL) {
+        if ($url !== NULL) {
             $this->url = $url;
         }
     }
@@ -79,7 +79,7 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
+        if (isset($result->data->error)) {
             throw new iDefendException($result->data->error);
         }
 
@@ -96,10 +96,10 @@ class iDefend
     {
         $request = $this->request('/policy/getProducts');
         $response = $request->post(Json::encode(''));
-        
+
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
+        if (isset($result->data->error)) {
             throw new iDefendException($result->data->error);
         }
 
@@ -122,11 +122,11 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if (isset($result->data->error))
             throw new iDefendException($result->data->error);
 
         $data = [];
-        foreach($result->data->PaymentTerm as $p) {
+        foreach ($result->data->PaymentTerm as $p) {
             $data[] = [
                 'id' => $p,
                 'name' => $p
@@ -152,12 +152,12 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
+        if (isset($result->data->error)) {
             throw new iDefendException($result->data->error);
         }
 
         $data = [];
-        foreach($result->data->InsuranceTerm as $p) {
+        foreach ($result->data->InsuranceTerm as $p) {
             $data[] = [
                 'id' => $p,
                 'name' => $p
@@ -177,15 +177,15 @@ class iDefend
     {
         $request = $this->request('/policy/getTitles');
         $response = $request->post(Json::encode(''));
-        
+
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
+        if (isset($result->data->error)) {
             throw new iDefendException($result->data->error);
         }
 
         $data = [];
-        foreach($result->data->Title as $k => $p) {
+        foreach ($result->data->Title as $k => $p) {
             $data[] = [
                 'id' => $k,
                 'name' => $p
@@ -208,7 +208,7 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
+        if (isset($result->data->error)) {
             throw new iDefendException($result->data->error);
         }
 
@@ -228,10 +228,10 @@ class iDefend
         $response = $request->post(Json::encode([
             'product_id' => $productId,
         ]));
-        
+
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
+        if (isset($result->data->error)) {
             throw new iDefendException($result->data->error);
         }
 
@@ -252,7 +252,7 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
+        if (isset($result->data->error)) {
             throw new iDefendException($result->data->error);
         }
 
@@ -273,9 +273,20 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
-            $err = serialize(Json::encode($result->data->error));
-            throw new iDefendException($err);
+        if (isset($result->data->error)) {
+            $err = $result->data->error;
+
+            if (is_object($err)) {
+                $msg = [];
+
+                foreach ($err as $k => $e) {
+                    $msg[] = $k . ': ' . (is_array($e) ? join(', ', $e) : $e);
+                }
+
+                throw new iDefendException(join('; ', $msg));
+            } else {
+                throw new iDefendException($err);
+            }
         }
 
         return $result->data;
@@ -295,9 +306,20 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
-            $err = serialize(Json::encode($result->data->error));
-            throw new iDefendException($err);
+        if (isset($result->data->error)) {
+            $err = $result->data->error;
+
+            if (is_object($err)) {
+                $msg = [];
+
+                foreach ($err as $k => $e) {
+                    $msg[] = $k . ': ' . (is_array($e) ? join(', ', $e) : $e);
+                }
+
+                throw new iDefendException(join('; ', $msg));
+            } else {
+                throw new iDefendException($err);
+            }
         }
 
         return $result->data;
@@ -319,7 +341,7 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
+        if (isset($result->data->error)) {
             throw new iDefendException($result->data->error);
         }
 
@@ -341,7 +363,7 @@ class iDefend
     {
         $request = $this->request('/policy/getPolicyList');
 
-        if($fields === NULL) {
+        if ($fields === NULL) {
             $fields = [
                 'id',
                 'policy_no',
@@ -365,7 +387,7 @@ class iDefend
             'fields' => $fields,
         ];
 
-        if($conditions !== NULL) {
+        if ($conditions !== NULL) {
             $data['conditions'] = $conditions;
         }
 
@@ -373,7 +395,7 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) )
+        if (isset($result->data->error))
             throw new iDefendException($result->data->error);
 
         $return = new \stdClass();
@@ -382,7 +404,7 @@ class iDefend
         unset($result->data->Paging);
 
         $return->data = [];
-        foreach($result->data as $policy) {
+        foreach ($result->data as $policy) {
             $return->data[] = $policy->Policy;
         }
 
@@ -405,7 +427,7 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
+        if (isset($result->data->error)) {
             throw new iDefendException($result->data->error);
         }
 
@@ -428,7 +450,7 @@ class iDefend
 
         $body = $response->getResponse();
 
-        if($response->getHeaders()['Content-Type'] == 'application/pdf') {
+        if ($response->getHeaders()['Content-Type'] == 'application/pdf') {
             $filename = $this->tempDir . '/' . $policyNo . '-' . md5($body) . '.pdf';
             file_put_contents($filename, $body);
             return $filename;
@@ -436,7 +458,7 @@ class iDefend
 
         $json = Json::decode($body);
 
-        if( isset($json->data->error) ) {
+        if (isset($json->data->error)) {
             throw new iDefendException($json->data->error);
         }
 
@@ -459,7 +481,7 @@ class iDefend
 
         $body = $response->getResponse();
 
-        if($response->getHeaders()['Content-Type'] == 'application/pdf') {
+        if ($response->getHeaders()['Content-Type'] == 'application/pdf') {
             $filename = $this->tempDir . '/' . $policyNo . '-' . md5($body) . '.pdf';
             file_put_contents($filename, $body);
             return $filename;
@@ -467,7 +489,7 @@ class iDefend
 
         $json = Json::decode($body);
 
-        if( isset($json->data->error) ) {
+        if (isset($json->data->error)) {
             throw new iDefendException($json->data->error);
         }
 
@@ -487,7 +509,7 @@ class iDefend
 
         $result = Json::decode($response->getResponse());
 
-        if( isset($result->data->error) ) {
+        if (isset($result->data->error)) {
             throw new iDefendException($result->data->error);
         }
 
