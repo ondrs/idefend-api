@@ -12,8 +12,7 @@
     }],
     "require": {
         "php": ">=5.4.0",
-        "kdyby/curl": "v2.0.0",
-        "nette/nette" : "2.1.*"
+        "kdyby/curl": "v2.1.0"
     },
     "require-dev": {
       "nette/tester": "@dev"

@@ -18,7 +18,7 @@ class iDefendTest extends \Tester\TestCase
         $this->idefend = new iDefend(TEMP_DIR);
 
         $username = 'test_user';
-        $password = '***';
+        $password = 'ondr3j';
 
         $this->idefend->setCredentials($username, $password);
     }
