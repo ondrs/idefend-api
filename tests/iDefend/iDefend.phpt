@@ -15,7 +15,7 @@ class iDefendTest extends \Tester\TestCase
 
     function setUp()
     {
-        $this->idefend = new iDefend(TEMP_DIR);
+        $this->idefend = new iDefend(TEMP_DIR, new \ondrs\iDefendApi\Sender());
 
         $username = 'test_user';
         $password = 'ondr3j';
@@ -30,10 +30,19 @@ class iDefendTest extends \Tester\TestCase
     }
 
 
+    function testStartWrongSession()
+    {
+        $this->idefend->setCredentials('pepa', 'zdepa');
+
+        Assert::exception(function() {
+            $this->idefend->startSession();
+        }, 'ondrs\iDefendApi\iDefendException', "Authorisation error");
+    }
+
+
     function testStartSession()
     {
         $response = $this->idefend->startSession();
-
         Assert::type('stdClass', $response->User);
     }
 
@@ -161,6 +170,24 @@ class iDefendTest extends \Tester\TestCase
     {
         $response = $this->idefend->closeSession();
         Assert::equal('Session is closed successfuly', $response);
+    }
+
+
+    function testGetCancellationCodificators()
+    {
+
+    }
+
+
+    function testCancelPolicy()
+    {
+
+    }
+
+
+    function testSavePdfFile()
+    {
+
     }
 
 

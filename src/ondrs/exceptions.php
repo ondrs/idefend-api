@@ -11,6 +11,19 @@ namespace ondrs\iDefendApi;
 
 class iDefendException extends \Exception
 {
+    const
+        AUTH_ERROR = 'Authorisation error',
+        NO_POLICY = "The policy couldn't be found";
+}
+
+
+class iDefendCurlException extends iDefendException
+{
 
 }
 
+
+class iDefendJsonException extends iDefendException
+{
+
+}

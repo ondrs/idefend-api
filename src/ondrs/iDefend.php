@@ -10,8 +10,10 @@ namespace ondrs\iDefendApi;
 
 
 use Kdyby\Curl\CurlException;
-use Kdyby\Curl\Request;
-use Nette\Utils\Json;
+use Kdyby\Curl\Response;
+use Nette\Utils\FileSystem;
+
+use Nette\Utils\Strings;
 
 class iDefend
 {
@@ -19,8 +21,11 @@ class iDefend
     /** @var string */
     private $tempDir;
 
-    /** @var string */
-    private $url = 'https://test.idefend.eu/ws';
+    /** @var array */
+    private $toDelete = [];
+
+    /** @var \ondrs\iDefendApi\Sender */
+    private $sender;
 
     /** @var string */
     private $username;
@@ -30,19 +35,25 @@ class iDefend
 
 
     /**
-     * @param string $tempDir
-     * @param string|null $url
+     * @param $tempDir
+     * @param Sender $sender
      */
-    public function __construct($tempDir, $url = NULL)
+    public function __construct($tempDir, Sender $sender)
     {
         $this->tempDir = $tempDir;
+        $this->sender = $sender;
 
-        if (!is_dir($this->tempDir)) {
-            mkdir($this->tempDir);
-        }
+        FileSystem::createDir($this->tempDir);
+    }
 
-        if ($url !== NULL) {
-            $this->url = $url;
+
+    /**
+     * Clean up - delete downloaded files
+     */
+    public function __destruct()
+    {
+        foreach ($this->toDelete as $file) {
+            FileSystem::delete($file);
         }
     }
 
@@ -57,6 +68,8 @@ class iDefend
         $this->username = $username;
         $this->password = $password;
 
+        $this->sender->setup($this->tempDir . '/' . $username . '.cookie');
+
         return $this;
     }
 
@@ -68,20 +81,14 @@ class iDefend
      */
     public function startSession()
     {
-        $request = $this->request('/user/startSession');
-
-        $response = $request->post(Json::encode([
+        $response = $this->sender->send('/user/startSession', [
             'User' => [
                 'username' => $this->username,
                 'password' => $this->password
             ],
-        ]));
+        ]);
 
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $result = Utils::jsonDecode($response);
 
         return $result->data;
     }
@@ -94,14 +101,8 @@ class iDefend
      */
     public function getProducts()
     {
-        $request = $this->request('/policy/getProducts');
-        $response = $request->post(Json::encode(''));
-
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $response = $this->sender->send('/policy/getProducts');
+        $result = Utils::jsonDecode($response);
 
         return $result->data->Product;
     }
@@ -110,20 +111,15 @@ class iDefend
     /**
      * @param int $productId
      * @return array
-     * @throws CurlException
      * @throws iDefendException
      */
     public function getPaymentTerms($productId)
     {
-        $request = $this->request('/policy/getPaymentTerms');
-        $response = $request->post(Json::encode([
+        $response = $this->sender->send('/policy/getPaymentTerms', [
             'product_id' => $productId,
-        ]));
+        ]);
 
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error))
-            throw new iDefendException($result->data->error);
+        $result = Utils::jsonDecode($response);
 
         $data = [];
         foreach ($result->data->PaymentTerm as $p) {
@@ -140,21 +136,15 @@ class iDefend
     /**
      * @param int $productId
      * @return array
-     * @throws CurlException
      * @throws iDefendException
      */
     public function getInsuranceTerms($productId)
     {
-        $request = $this->request('/policy/getInsuranceTerms');
-        $response = $request->post(Json::encode([
+        $response = $this->sender->send('/policy/getInsuranceTerms', [
             'product_id' => $productId,
-        ]));
+        ]);
 
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $result = Utils::jsonDecode($response);
 
         $data = [];
         foreach ($result->data->InsuranceTerm as $p) {
@@ -170,25 +160,18 @@ class iDefend
 
     /**
      * @return array
-     * @throws CurlException
      * @throws iDefendException
      */
     public function getTitles()
     {
-        $request = $this->request('/policy/getTitles');
-        $response = $request->post(Json::encode(''));
-
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $response = $this->sender->send('/policy/getTitles');
+        $result = Utils::jsonDecode($response);
 
         $data = [];
-        foreach ($result->data->Title as $k => $p) {
+        foreach ($result->data->Title as $key => $value) {
             $data[] = [
-                'id' => $k,
-                'name' => $p
+                'id' => $key,
+                'name' => $value
             ];
         }
 
@@ -198,19 +181,12 @@ class iDefend
 
     /**
      * @return array
-     * @throws CurlException
      * @throws iDefendException
      */
     public function getExtras()
     {
-        $request = $this->request('/policy/getExtras');
-        $response = $request->post(Json::encode(''));
-
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $response = $this->sender->send('/policy/getExtras');
+        $result = Utils::jsonDecode($response);
 
         return $result->data->Extra;
     }
@@ -219,21 +195,15 @@ class iDefend
     /**
      * @param $productId
      * @return array
-     * @throws CurlException
      * @throws iDefendException
      */
     public function getLoadings($productId)
     {
-        $request = $this->request('/policy/getLoadings');
-        $response = $request->post(Json::encode([
+        $response = $this->sender->send('/policy/getLoadings', [
             'product_id' => $productId,
-        ]));
+        ]);
 
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $result = Utils::jsonDecode($response);
 
         return $result->data->Loading;
     }
@@ -242,19 +212,12 @@ class iDefend
     /**
      * @param array $data
      * @return \stdClass
-     * @throws CurlException
      * @throws iDefendException
      */
     public function getCoverages(array $data)
     {
-        $request = $this->request('/policy/getCoverages');
-        $response = $request->post(Json::encode($data));
-
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $response = $this->sender->send('/policy/getCoverages', $data);
+        $result = Utils::jsonDecode($response);
 
         return $result->data;
     }
@@ -263,31 +226,12 @@ class iDefend
     /**
      * @param array $data
      * @return \stdClass
-     * @throws CurlException
      * @throws iDefendException
      */
     public function savePolicy(array $data)
     {
-        $request = $this->request('/policy/savePolicy');
-        $response = $request->post(Json::encode($data));
-
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            $err = $result->data->error;
-
-            if (is_object($err)) {
-                $msg = [];
-
-                foreach ($err as $k => $e) {
-                    $msg[] = $k . ': ' . (is_array($e) ? join(', ', $e) : $e);
-                }
-
-                throw new iDefendException(join('; ', $msg));
-            } else {
-                throw new iDefendException($err);
-            }
-        }
+        $response = $this->sender->send('/policy/savePolicy', $data);
+        $result = Utils::jsonDecode($response);
 
         return $result->data;
     }
@@ -296,31 +240,12 @@ class iDefend
     /**
      * @param array $data
      * @return \stdClass
-     * @throws CurlException
      * @throws iDefendException
      */
     public function saveQuote(array $data)
     {
-        $request = $this->request('/policy/saveQuote');
-        $response = $request->post(Json::encode($data));
-
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            $err = $result->data->error;
-
-            if (is_object($err)) {
-                $msg = [];
-
-                foreach ($err as $k => $e) {
-                    $msg[] = $k . ': ' . (is_array($e) ? join(', ', $e) : $e);
-                }
-
-                throw new iDefendException(join('; ', $msg));
-            } else {
-                throw new iDefendException($err);
-            }
-        }
+        $response = $this->sender->send('/policy/saveQuote', $data);
+        $result = Utils::jsonDecode($response);
 
         return $result->data;
     }
@@ -329,21 +254,15 @@ class iDefend
     /**
      * @param string $policyNo
      * @return \stdClass
-     * @throws CurlException
      * @throws iDefendException
      */
     public function getPolicy($policyNo)
     {
-        $request = $this->request('/policy/getPolicy');
-        $response = $request->post(Json::encode([
+        $response = $this->sender->send('/policy/getPolicy', [
             'policy_no' => $policyNo,
-        ]));
+        ]);
 
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $result = Utils::jsonDecode($response);
 
         return $result->data;
     }
@@ -356,13 +275,10 @@ class iDefend
      * @param null|array $fields
      * @return mixed
      * @return \stdClass
-     * @throws CurlException
      * @throws iDefendException
      */
     public function getPolicyList($page = 1, $limit = 30, $conditions = NULL, $fields = NULL)
     {
-        $request = $this->request('/policy/getPolicyList');
-
         if ($fields === NULL) {
             $fields = [
                 'id',
@@ -391,12 +307,8 @@ class iDefend
             $data['conditions'] = $conditions;
         }
 
-        $response = $request->post(Json::encode($data));
-
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error))
-            throw new iDefendException($result->data->error);
+        $response = $this->sender->send('/policy/getPolicyList', $data);
+        $result = Utils::jsonDecode($response);
 
         $return = new \stdClass();
 
@@ -415,21 +327,15 @@ class iDefend
     /**
      * @param string $policyNo
      * @return \stdClass
-     * @throws CurlException
      * @throws iDefendException
      */
     public function deletePolicy($policyNo)
     {
-        $request = $this->request('/policy/deletePolicy');
-        $response = $request->post(Json::encode([
+        $response = $this->sender->send('/policy/deletePolicy', [
             'policy_no' => $policyNo,
-        ]));
+        ]);
 
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $result = Utils::jsonDecode($response);
 
         return $result->data;
     }
@@ -438,29 +344,20 @@ class iDefend
     /**
      * @param string $policyNo
      * @return \stdClass
-     * @throws CurlException
      * @throws iDefendException
      */
     public function getProposal($policyNo)
     {
-        $request = $this->request('/policy/getProposal');
-        $response = $request->post(Json::encode([
+        $response = $this->sender->send('/policy/getProposal', [
             'policy_no' => $policyNo,
-        ]));
+        ]);
 
-        $body = $response->getResponse();
-
-        if ($response->getHeaders()['Content-Type'] == 'application/pdf') {
-            $filename = $this->tempDir . '/' . $policyNo . '-' . md5($body) . '.pdf';
-            file_put_contents($filename, $body);
-            return $filename;
+        if($file = $this->savePdfFile($policyNo, $response)) {
+            return $file;
         }
 
-        $json = Json::decode($body);
-
-        if (isset($json->data->error)) {
-            throw new iDefendException($json->data->error);
-        }
+        // intently just decode - for catching an error
+        Utils::jsonDecode($response);
 
         throw new iDefendException("Wrong response - no PDF or error");
     }
@@ -469,29 +366,20 @@ class iDefend
     /**
      * @param string $policyNo
      * @return \stdClass
-     * @throws CurlException
      * @throws iDefendException
      */
     public function getQuote($policyNo)
     {
-        $request = $this->request('/policy/getQuote');
-        $response = $request->post(Json::encode([
+        $response = $this->sender->send('/policy/getQuote', [
             'policy_no' => $policyNo,
-        ]));
+        ]);
 
-        $body = $response->getResponse();
-
-        if ($response->getHeaders()['Content-Type'] == 'application/pdf') {
-            $filename = $this->tempDir . '/' . $policyNo . '-' . md5($body) . '.pdf';
-            file_put_contents($filename, $body);
-            return $filename;
+        if($file = $this->savePdfFile($policyNo, $response)) {
+            return $file;
         }
 
-        $json = Json::decode($body);
-
-        if (isset($json->data->error)) {
-            throw new iDefendException($json->data->error);
-        }
+        // intently just decode - for catching an error
+        Utils::jsonDecode($response);
 
         throw new iDefendException("Wrong response - no PDF or error");
     }
@@ -499,19 +387,12 @@ class iDefend
 
     /**
      * @return \stdClass
-     * @throws CurlException
      * @throws iDefendException
      */
     public function closeSession()
     {
-        $request = $this->request('/user/closeSession');
-        $response = $request->post(Json::encode(''));
-
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $response = $this->sender->send('/user/closeSession');
+        $result = Utils::jsonDecode($response);
 
         return $result->data;
     }
@@ -524,14 +405,8 @@ class iDefend
      */
     public function getCancellationCodificators()
     {
-        $request = $this->request('/user/getCancellationCodificators');
-        $response = $request->post(Json::encode(''));
-
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $response = $this->sender->send('/user/getCancellationCodificators');
+        $result = Utils::jsonDecode($response);
 
         return $result->data;
     }
@@ -544,37 +419,34 @@ class iDefend
      */
     public function cancelPolicy(array $data)
     {
-        $request = $this->request('/user/cancelPolicy');
-        $response = $request->post(Json::encode($data));
-
-        $result = Json::decode($response->getResponse());
-
-        if (isset($result->data->error)) {
-            throw new iDefendException($result->data->error);
-        }
+        $response = $this->sender->send('/user/cancelPolicy', $data);
+        $result = Utils::jsonDecode($response);
 
         return $result->data;
     }
 
 
+    /****************** Helper functions *****************/
+
+
     /**
-     * @param $url
-     * @return Request
+     * @param $policyNo
+     * @param Response $response
+     * @return bool|string
      */
-    private function request($url)
+    public function savePdfFile($policyNo, Response $response)
     {
-        $request = new Request($this->url . $url);
-        $request->setCertificationVerify(FALSE);
+        if ($response->getHeaders()['Content-Type'] !== 'application/pdf') {
+            return FALSE;
+        }
 
-        $file = $this->tempDir . '/' . $this->username . '.cookie';
+        $body = $response->getResponse();
 
-        $request->options['cookieSession'] = TRUE;
-        $request->options['cookieFile'] = $file;
-        $request->options['cookieJar'] = $file;
+        $filename = $this->tempDir . '/' . $policyNo . '-' . Strings::substring(md5($body), 0, 5) . '.pdf';
+        $this->toDelete[] = $filename;
+        file_put_contents($filename, $body);
 
-        $request->headers['Content-Type'] = 'application/json';
-
-        return $request;
+        return $filename;
     }
 
 } 

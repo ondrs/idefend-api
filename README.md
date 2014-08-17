@@ -14,4 +14,7 @@ composer.json
 Usage
 -----
 
+    $sender = new ondrs\iDefendApi\Sender();
+    $idefend = new ondrs\iDefendApi\iDefend('path/to/temp/dir', $sender);
+
 All methods from API documentation (http://docs.idefend.apiary.io) are implemented with the same name.

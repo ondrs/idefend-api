@@ -12,11 +12,13 @@
     }],
     "require": {
         "php": ">=5.4.0",
-        "nette/nette" : ">=2.1.0",
+        "nette/utils" : "2.2.*@dev",
         "kdyby/curl": "2.2.*@dev"
     },
     "require-dev": {
-      "nette/tester": "@dev"
+      "nette/tester": "@dev",
+      "janmarek/mockista": "dev-master",
+      "jakub-onderka/php-parallel-lint": "0.*"
     },
     "autoload": {
         "classmap": ["src/"]
