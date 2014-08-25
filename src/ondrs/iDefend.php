@@ -444,7 +444,7 @@ class iDefend
 
         $filename = $this->tempDir . '/' . $policyNo . '-' . Strings::substring(md5($body), 0, 5) . '.pdf';
         $this->toDelete[] = $filename;
-        file_put_contents($filename, $body);
+        FileSystem::write($filename, $body);
 
         return $filename;
     }
