@@ -205,7 +205,13 @@ class iDefend
 
         $result = Utils::jsonDecode($response);
 
-        return $result->data->Loading;
+        // remove id duplicates
+        $filtered = [];
+        foreach($result->data->Loading as $r) {
+            $filtered[$r->id] = $r;
+        }
+
+        return array_values($filtered);
     }
 
 
