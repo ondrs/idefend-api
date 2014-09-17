@@ -21,7 +21,7 @@ class Sender
     private $curlSender;
 
     /** @var string */
-    private $url = 'https://test.idefend.eu/ws';
+    private $url = 'https://www.idefend.eu/ws';
 
 
     /**
