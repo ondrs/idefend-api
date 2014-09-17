@@ -15,7 +15,7 @@ class iDefendTest extends \Tester\TestCase
 
     function setUp()
     {
-        $this->idefend = new iDefend(TEMP_DIR, new \ondrs\iDefendApi\Sender());
+        $this->idefend = new iDefend(TEMP_DIR, new \ondrs\iDefendApi\Sender('https://test.idefend.eu/ws'));
 
         $username = 'test_user';
         $password = 'ondr3j';
