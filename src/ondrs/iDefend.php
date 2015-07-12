@@ -28,7 +28,7 @@ class iDefend
 
 
     /**
-     * @param $tempDir
+     * @param string $tempDir
      * @param Sender $sender
      */
     public function __construct($tempDir, Sender $sender)
@@ -466,7 +466,7 @@ class iDefend
 
 
     /**
-     * @param $policyNo
+     * @param string $policyNo
      * @param Response $response
      * @return bool|string
      */
