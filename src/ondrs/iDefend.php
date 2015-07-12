@@ -407,7 +407,13 @@ class iDefend
         $response = $this->sender->send('/user/getCancellationCodificators');
         $result = Utils::jsonDecode($response);
 
-        return $result->data;
+        $data = [];
+
+        foreach($result->data as $key => $val) {
+            $data[$key] = (array)$val;
+        }
+
+        return (object)$data;
     }
 
 
@@ -422,6 +428,19 @@ class iDefend
         $result = Utils::jsonDecode($response);
 
         return $result->data;
+    }
+
+
+    /**
+     * @return array
+     * @throws iDefendException
+     */
+    public function getUploadDocTypes()
+    {
+        $response = $this->sender->send('/policy/getUploadDocTypes');
+        $result = Utils::jsonDecode($response);
+
+        return (array)$result->data;
     }
 
 

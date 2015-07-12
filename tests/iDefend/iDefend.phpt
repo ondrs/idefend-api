@@ -9,7 +9,7 @@ require_once __DIR__ . '/../bootstrap.php';
 class iDefendTest extends \Tester\TestCase
 {
 
-    /** @var ondrs\iDefendApi\iDefend  */
+    /** @var ondrs\iDefendApi\iDefend */
     private $idefend;
 
 
@@ -34,7 +34,7 @@ class iDefendTest extends \Tester\TestCase
     {
         $this->idefend->setCredentials('pepa', 'zdepa');
 
-        Assert::exception(function() {
+        Assert::exception(function () {
             $this->idefend->startSession();
         }, 'ondrs\iDefendApi\iDefendException', "Authorisation error");
     }
@@ -45,7 +45,6 @@ class iDefendTest extends \Tester\TestCase
         $response = $this->idefend->startSession();
         Assert::type('stdClass', $response->User);
     }
-
 
 
     function testGetProducts()
@@ -89,36 +88,36 @@ class iDefendTest extends \Tester\TestCase
         Assert::type('array', $response);
     }
 
-
+    /*
     function testGetCoverages()
     {
-        $data = \Nette\Utils\Json::decode(file_get_contents(__DIR__ . '/data/covers.warranty.request.json'), \Nette\Utils\Json::FORCE_ARRAY);
+       $data = \Nette\Utils\Json::decode(file_get_contents(__DIR__ . '/data/covers.warranty.request.json'), \Nette\Utils\Json::FORCE_ARRAY);
 
-        $response = $this->idefend->getCoverages($data);
-        Assert::type('stdClass', $response->Policy);
-        Assert::type('array', $response->Extra);
-        Assert::type('array', $response->Loading);
-        Assert::type('array', $response->Coverage);
-        Assert::type('array', $response->LoadingType);
+       $response = $this->idefend->getCoverages($data);
+       Assert::type('stdClass', $response->Policy);
+       Assert::type('array', $response->Extra);
+       Assert::type('array', $response->Loading);
+       Assert::type('array', $response->Coverage);
+       Assert::type('array', $response->LoadingType);
     }
 
 
-    /*
+
     function testSavePolicy()
     {
-        $data = \Nette\Utils\Json::decode(file_get_contents(__DIR__ . '/data/policy.request.json'), \Nette\Utils\Json::FORCE_ARRAY);
+       $data = \Nette\Utils\Json::decode(file_get_contents(__DIR__ . '/data/policy.request.json'), \Nette\Utils\Json::FORCE_ARRAY);
 
-        $response = $this->idefend->savePolicy($data);
-        Assert::type('stdClass', $response->Policy);
-        Assert::type('array', $response->Extra);
-        Assert::type('array', $response->Loading);
+       $response = $this->idefend->savePolicy($data);
+       Assert::type('stdClass', $response->Policy);
+       Assert::type('array', $response->Extra);
+       Assert::type('array', $response->Loading);
     }
-    */
+   */
 
 
     function testGetPolicy()
     {
-        Assert::exception(function() {
+        Assert::exception(function () {
             $this->idefend->getPolicy('NONSENSE');
         }, 'ondrs\iDefendApi\iDefendException', "The policy couldn't be found");
     }
@@ -126,7 +125,7 @@ class iDefendTest extends \Tester\TestCase
 
     function testGetQuote()
     {
-       // TODO: implement
+        // TODO: implement
     }
 
 
@@ -151,7 +150,7 @@ class iDefendTest extends \Tester\TestCase
 
     function testDeletePolicy()
     {
-        Assert::exception(function() {
+        Assert::exception(function () {
             $this->idefend->deletePolicy('NONSENSE');
         }, 'ondrs\iDefendApi\iDefendException', 'Could not delete the policy no: NONSENSE');
     }
@@ -159,23 +158,22 @@ class iDefendTest extends \Tester\TestCase
 
     function testGetProposal()
     {
-        Assert::exception(function() {
+        Assert::exception(function () {
             $this->idefend->getProposal('NONSENSE');
         }, 'ondrs\iDefendApi\iDefendException', 'Could not return proposal for this policy: NONSENSE');
 
     }
 
 
-    function testCloseSession()
-    {
-        $response = $this->idefend->closeSession();
-        Assert::equal('Session is closed successfuly', $response);
-    }
-
-
     function testGetCancellationCodificators()
     {
+        $result = $this->idefend->getCancellationCodificators();
 
+        Assert::type('stdClass', $result);
+
+        Assert::type('array', $result->cancellation_reason);
+        Assert::type('array', $result->cancellation_refund);
+        Assert::type('array', $result->refund_paid_to);
     }
 
 
@@ -188,6 +186,22 @@ class iDefendTest extends \Tester\TestCase
     function testSavePdfFile()
     {
 
+    }
+
+
+    function testGetUploadDocTypes()
+    {
+        $types = $this->idefend->getUploadDocTypes();
+
+        Assert::type('array', $types);
+        Assert::count(11, $types);
+    }
+
+
+    function testCloseSession()
+    {
+        $response = $this->idefend->closeSession();
+        Assert::equal('Session is closed successfuly', $response);
     }
 
 
