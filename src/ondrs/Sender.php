@@ -56,11 +56,11 @@ class Sender
 
     /**
      * @param string $url
-     * @param array $data
+     * @param string|array $data
      * @return \Kdyby\Curl\Response
      * @throws iDefendCurlException
      */
-    public function send($url, array $data = [])
+    public function send($url, $data = '')
     {
         try {
             $request = new Request($this->url . $url);
