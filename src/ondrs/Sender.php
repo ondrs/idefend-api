@@ -19,7 +19,7 @@ class Sender
 
 
     /**
-     * @param null $url
+     * @param string $url
      * @param CurlSender $curlSender
      */
     public function __construct($url = NULL, CurlSender $curlSender = NULL)
@@ -37,7 +37,7 @@ class Sender
 
 
     /**
-     * @param $cookieFileName
+     * @param string $cookieFileName
      * @return $this
      */
     public function setup($cookieFileName)
@@ -55,18 +55,19 @@ class Sender
 
 
     /**
-     * @param $url
-     * @param string $data
+     * @param string $url
+     * @param array $data
      * @return \Kdyby\Curl\Response
      * @throws iDefendCurlException
      */
-    public function send($url, $data = '')
+    public function send($url, array $data = [])
     {
         try {
             $request = new Request($this->url . $url);
             $request->setSender($this->curlSender);
 
             return $request->post(Json::encode($data));
+
         } catch (CurlException $e) {
             throw new iDefendCurlException($e->getMessage());
         }
