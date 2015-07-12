@@ -444,6 +444,24 @@ class iDefend
     }
 
 
+    public function uploadPolicyDocs()
+    {
+        // TODO
+    }
+
+
+    public function getPolicyUploadedDocs()
+    {
+        // TODO
+    }
+
+
+    public function deletePolicyUploadedDoc()
+    {
+        // TODO
+    }
+
+
     /****************** Helper functions *****************/
 
 
