@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Ondra
- * Date: 17.8.14
- * Time: 11:37
- */
 
 namespace ondrs\iDefendApi;
 
@@ -58,7 +52,6 @@ class Sender
 
         return $this;
     }
-
 
 
     /**

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Ondra
- * Date: 17.8.14
- * Time: 11:46
- */
 
 namespace ondrs\iDefendApi;
 
@@ -22,9 +16,9 @@ class Utils
      * @throws iDefendJsonException
      * @throws iDefendException
      */
-    public static  function jsonDecode($data)
+    public static function jsonDecode($data)
     {
-        if($data instanceof Response) {
+        if ($data instanceof Response) {
             $data = $data->getResponse();
         }
 

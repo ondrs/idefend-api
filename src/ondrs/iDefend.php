@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Ondra
- * Date: 22.2.14
- * Time: 11:11
- */
 
 namespace ondrs\iDefendApi;
 
@@ -12,7 +6,6 @@ namespace ondrs\iDefendApi;
 use Kdyby\Curl\CurlException;
 use Kdyby\Curl\Response;
 use Nette\Utils\FileSystem;
-
 use Nette\Utils\Strings;
 
 class iDefend
@@ -207,7 +200,7 @@ class iDefend
 
         // remove id duplicates
         $filtered = [];
-        foreach($result->data->Loading as $r) {
+        foreach ($result->data->Loading as $r) {
             $filtered[$r->id] = $r;
         }
 
@@ -358,7 +351,7 @@ class iDefend
             'policy_no' => $policyNo,
         ]);
 
-        if($file = $this->savePdfFile($policyNo, $response)) {
+        if ($file = $this->savePdfFile($policyNo, $response)) {
             return $file;
         }
 
@@ -380,7 +373,7 @@ class iDefend
             'policy_no' => $policyNo,
         ]);
 
-        if($file = $this->savePdfFile($policyNo, $response)) {
+        if ($file = $this->savePdfFile($policyNo, $response)) {
             return $file;
         }
 
