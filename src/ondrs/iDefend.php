@@ -444,6 +444,17 @@ class iDefend
     }
 
 
+    public function getPolicyDefaultValues($productId)
+    {
+        $response = $this->sender->send('/policy/getPolicyDefaultValues', [
+            'product_id' => $productId,
+        ]);
+        $result = Utils::jsonDecode($response);
+
+        return $result->data->PolicyDefaultValues;
+    }
+
+
     public function uploadPolicyDocs()
     {
         // TODO

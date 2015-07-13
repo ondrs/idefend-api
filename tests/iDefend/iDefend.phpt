@@ -198,6 +198,14 @@ class iDefendTest extends \Tester\TestCase
     }
 
 
+    function testGetPolicyDefaultValues()
+    {
+        $values = $this->idefend->getPolicyDefaultValues(2);
+
+        Assert::type('array', $values);
+    }
+
+
     function testCloseSession()
     {
         $response = $this->idefend->closeSession();
