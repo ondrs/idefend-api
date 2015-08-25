@@ -198,6 +198,28 @@ class iDefendTest extends \Tester\TestCase
     }
 
 
+    function testGetPolicyUploadedDocs()
+    {
+        $response = $this->idefend->getPolicyList(1, 30);
+        $policyNo = $response->data[0]->policy_no;
+
+        $result = $this->idefend->getPolicyUploadedDocs($policyNo);
+        Assert::type('array', $result);
+    }
+
+
+    function testUploadPolicyDocs()
+    {
+        //$response = $this->idefend->getPolicyList(1, 30);
+        //$policyNo = $response->data[0]->policy_no;
+
+        $filename = __DIR__ . '/data/doc.pdf';
+
+        $result = $this->idefend->uploadPolicyDocs($filename, 'Other', 'some info');
+        Assert::type('stdClass', $result);
+    }
+
+
     function testGetPolicyDefaultValues()
     {
         $values = $this->idefend->getPolicyDefaultValues(2);

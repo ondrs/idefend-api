@@ -409,7 +409,7 @@ class iDefend
 
         $data = [];
 
-        foreach($result->data as $key => $val) {
+        foreach ($result->data as $key => $val) {
             $data[$key] = (array)$val;
         }
 
@@ -455,21 +455,76 @@ class iDefend
     }
 
 
-    public function uploadPolicyDocs()
+    /**
+     * Intently uploads just a single file
+     *
+     * @param string $filename
+     * @param string $type
+     * @param NULL|string $info
+     * @return bool
+     * @throws iDefendException
+     */
+    public function uploadPolicyDocs($filename, $type, $info = NULL)
     {
-        // TODO
+        if (!file_exists($filename)) {
+            throw new iDefendFileNotFoundException("File $filename does not exists");
+        }
+
+        $content = @file_get_contents($filename);
+
+        if (!$content) {
+            throw new iDefendIOException("There was a problem while reading a content of the file $filename");
+        }
+
+        $obj = (object)[
+            'filename' => (new \SplFileInfo($filename))->getFilename(),
+            'type' => $type,
+            'content' => base64_encode($content),
+        ];
+
+        if ($info !== NULL) {
+            $obj->info = $info;
+        }
+
+        $response = $this->sender->send('/policy/uploadPolicyDocs', [$obj]);
+
+        $result = Utils::jsonDecode($response);
+
+        return (bool) count($result->data);
     }
 
 
-    public function getPolicyUploadedDocs()
+    /**
+     * @param $policyNo
+     * @return object
+     * @throws array
+     */
+    public function getPolicyUploadedDocs($policyNo)
     {
-        // TODO
+        $response = $this->sender->send('/policy/getPolicyUploadedDocs', [
+            'policy_no' => $policyNo,
+        ]);
+
+        $result = Utils::jsonDecode($response);
+
+        return $result->data;
     }
 
 
-    public function deletePolicyUploadedDoc()
+    /**
+     * @param $id
+     * @return mixed
+     * @throws iDefendException
+     */
+    public function deletePolicyUploadedDoc($id)
     {
-        // TODO
+        $response = $this->sender->send('/policy/deletePolicyUploadedDoc', [
+            'id' => $id,
+        ]);
+
+        $result = Utils::jsonDecode($response);
+
+        return $result->data;
     }
 
 

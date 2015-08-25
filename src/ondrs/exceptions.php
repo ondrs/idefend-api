@@ -20,3 +20,13 @@ class iDefendJsonException extends iDefendException
 {
 
 }
+
+class iDefendFileNotFoundException extends iDefendException
+{
+
+}
+
+class iDefendIOException extends iDefendException
+{
+
+}
