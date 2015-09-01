@@ -479,7 +479,7 @@ class iDefend
         $obj = (object)[
             'filename' => (new \SplFileInfo($filename))->getFilename(),
             'type' => $type,
-            'content' => base64_encode($content),
+            'contents' => base64_encode($content),
         ];
 
         if ($info !== NULL) {
