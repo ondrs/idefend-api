@@ -18,7 +18,7 @@ class iDefendTest extends \Tester\TestCase
         $this->idefend = new iDefend(TEMP_DIR, new \ondrs\iDefendApi\Sender('https://test.idefend.eu/ws'));
 
         $username = 'test_user';
-        $password = 'ondr3j';
+        $password = 'Ch9ddgy';
 
         $this->idefend->setCredentials($username, $password);
     }
@@ -210,13 +210,13 @@ class iDefendTest extends \Tester\TestCase
 
     function testUploadPolicyDocs()
     {
-        //$response = $this->idefend->getPolicyList(1, 30);
-        //$policyNo = $response->data[0]->policy_no;
+        $response = $this->idefend->getPolicyList(1, 30);
+        $policyNo = $response->data[0]->policy_no;
 
         $filename = __DIR__ . '/data/doc.pdf';
 
-        $result = $this->idefend->uploadPolicyDocs($filename, 'Other', 'some info');
-        Assert::type('stdClass', $result);
+        $result = $this->idefend->uploadPolicyDocs($policyNo, $filename, 'Other', 'some info');
+        Assert::true($result);
     }
 
 

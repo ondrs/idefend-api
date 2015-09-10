@@ -458,13 +458,14 @@ class iDefend
     /**
      * Intently uploads just a single file
      *
+     * @param string $policyNo
      * @param string $filename
      * @param string $type
      * @param NULL|string $info
      * @return bool
      * @throws iDefendException
      */
-    public function uploadPolicyDocs($filename, $type, $info = NULL)
+    public function uploadPolicyDocs($policyNo, $filename, $type, $info = NULL)
     {
         if (!file_exists($filename)) {
             throw new iDefendFileNotFoundException("File $filename does not exists");
@@ -486,11 +487,14 @@ class iDefend
             $obj->info = $info;
         }
 
-        $response = $this->sender->send('/policy/uploadPolicyDocs', [$obj]);
+        $response = $this->sender->send('/policy/uploadPolicyDocs', [
+            'policy_no' => $policyNo,
+            'docs' => [$obj],
+        ]);
 
         $result = Utils::jsonDecode($response);
 
-        return (bool) count($result->data);
+        return (bool)count($result->data);
     }
 
 
