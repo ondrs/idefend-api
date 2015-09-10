@@ -456,40 +456,19 @@ class iDefend
 
 
     /**
-     * Intently uploads just a single file
+     * Upload policy docs
      *
      * @param string $policyNo
-     * @param string $filename
-     * @param string $type
-     * @param NULL|string $info
+     * @param PolicyDoc[] $docs
      * @return bool
-     * @throws iDefendException
      */
-    public function uploadPolicyDocs($policyNo, $filename, $type, $info = NULL)
+    public function uploadPolicyDocs($policyNo, array $docs)
     {
-        if (!file_exists($filename)) {
-            throw new iDefendFileNotFoundException("File $filename does not exists");
-        }
-
-        $content = @file_get_contents($filename);
-
-        if (!$content) {
-            throw new iDefendIOException("There was a problem while reading a content of the file $filename");
-        }
-
-        $obj = (object)[
-            'filename' => (new \SplFileInfo($filename))->getFilename(),
-            'type' => $type,
-            'contents' => base64_encode($content),
-        ];
-
-        if ($info !== NULL) {
-            $obj->info = $info;
-        }
-
         $response = $this->sender->send('/policy/uploadPolicyDocs', [
             'policy_no' => $policyNo,
-            'docs' => [$obj],
+            'docs' => array_map(function (PolicyDoc $doc) {
+                return $doc->getValues();
+            }, $docs),
         ]);
 
         $result = Utils::jsonDecode($response);

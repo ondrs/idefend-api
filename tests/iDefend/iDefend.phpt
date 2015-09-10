@@ -1,6 +1,7 @@
 <?php
 
 use ondrs\iDefendApi\iDefend;
+use ondrs\iDefendApi\PolicyDoc;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
@@ -215,7 +216,9 @@ class iDefendTest extends \Tester\TestCase
 
         $filename = __DIR__ . '/data/doc.pdf';
 
-        $result = $this->idefend->uploadPolicyDocs($policyNo, $filename, 'Other', 'some info');
+        $docs = [new PolicyDoc($filename)];
+
+        $result = $this->idefend->uploadPolicyDocs($policyNo, $docs);
         Assert::true($result);
     }
 
