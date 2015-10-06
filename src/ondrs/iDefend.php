@@ -52,6 +52,15 @@ class iDefend
 
 
     /**
+     * @return string
+     */
+    public function getApiUrl()
+    {
+        return $this->sender->getUrl();
+    }
+
+
+    /**
      * @param string $username
      * @param string $password
      * @return $this

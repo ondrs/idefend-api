@@ -37,6 +37,15 @@ class Sender
 
 
     /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+
+    /**
      * @param string $cookieFileName
      * @return $this
      */
